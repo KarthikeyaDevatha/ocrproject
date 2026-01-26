@@ -34,7 +34,13 @@ def check_for_errors(text):
 def verify(args):
     print(f"Loading model from {args.model_path}...")
     try:
-        processor = TrOCRProcessor.from_pretrained(args.model_path)
+        # Try loading both from checkpoint
+        try:
+            processor = TrOCRProcessor.from_pretrained(args.model_path)
+        except:
+            print("Processor not found in checkpoint, loading from base 'microsoft/trocr-small-handwritten'...")
+            processor = TrOCRProcessor.from_pretrained("microsoft/trocr-small-handwritten")
+            
         model = VisionEncoderDecoderModel.from_pretrained(args.model_path)
     except Exception as e:
         print(f"Failed to load model: {e}")

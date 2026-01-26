@@ -8,8 +8,28 @@ import json
 import argparse
 from typing import List, Tuple, Dict
 
-import fastwer
 from tqdm import tqdm
+
+
+def _levenshtein_distance(s1: str, s2: str) -> int:
+    """Compute Levenshtein (edit) distance between two strings."""
+    if len(s1) < len(s2):
+        return _levenshtein_distance(s2, s1)
+    
+    if len(s2) == 0:
+        return len(s1)
+    
+    previous_row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
+        current_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            insertions = previous_row[j + 1] + 1
+            deletions = current_row[j] + 1
+            substitutions = previous_row[j] + (c1 != c2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+    
+    return previous_row[-1]
 
 
 def load_manifest(manifest_path: str) -> List[Dict]:
@@ -35,7 +55,8 @@ def compute_cer(prediction: str, reference: str) -> float:
     if not reference:
         return 0.0 if not prediction else 1.0
     
-    return fastwer.score_sent(prediction, reference, char_level=True) / 100.0
+    distance = _levenshtein_distance(prediction, reference)
+    return distance / len(reference)
 
 
 def compute_wer(prediction: str, reference: str) -> float:
@@ -52,7 +73,43 @@ def compute_wer(prediction: str, reference: str) -> float:
     if not reference:
         return 0.0 if not prediction else 1.0
     
-    return fastwer.score_sent(prediction, reference, char_level=False) / 100.0
+    pred_words = prediction.split()
+    ref_words = reference.split()
+    
+    if len(ref_words) == 0:
+        return 0.0 if len(pred_words) == 0 else 1.0
+    
+    distance = _levenshtein_distance(' '.join(pred_words), ' '.join(ref_words))
+    # Word-level: count edits on word list
+    # Simpler approach: use word-based edit distance
+    distance = _levenshtein_word_distance(pred_words, ref_words)
+    return distance / len(ref_words)
+
+
+def _levenshtein_word_distance(s1: List[str], s2: List[str]) -> int:
+    """Compute Levenshtein distance at word level."""
+    if len(s1) < len(s2):
+        return _levenshtein_word_distance(s2, s1)
+    
+    if len(s2) == 0:
+        return len(s1)
+    
+    previous_row = range(len(s2) + 1)
+    for i, w1 in enumerate(s1):
+        current_row = [i + 1]
+        for j, w2 in enumerate(s2):
+            insertions = previous_row[j + 1] + 1
+            deletions = current_row[j] + 1
+            substitutions = previous_row[j] + (w1 != w2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+    
+    return previous_row[-1]
+
+
+
+
+
 
 
 def evaluate_predictions(

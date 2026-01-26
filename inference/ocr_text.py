@@ -55,7 +55,9 @@ class TextOCR:
         self.num_beams = num_beams
         self.timeout = timeout
         self.confidence_threshold = confidence_threshold
+        self.confidence_threshold = confidence_threshold
         self.model_path = model_path
+        self.device = device
         
         self.torch_model = None
         
@@ -103,16 +105,27 @@ class TextOCR:
             path = self.model_path if self.model_path else "microsoft/trocr-small-handwritten"
             print(f"Loading PyTorch model from: {path}")
             
-            self.torch_model = VisionEncoderDecoderModel.from_pretrained(path)
+            try:
+                self.torch_model = VisionEncoderDecoderModel.from_pretrained(path)
+            except Exception as e:
+                print(f"Failed to load form {path}: {e}")
+                if path != "microsoft/trocr-small-handwritten":
+                    print("Attempting to load base model 'microsoft/trocr-small-handwritten' instead...")
+                    self.torch_model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-small-handwritten")
+                else:
+                    raise e
+                    
             self.torch_model.eval()
-            self.device = "cpu"
             
-            if torch.cuda.is_available():
+            if self.device == "cuda" and torch.cuda.is_available():
                 self.torch_model = self.torch_model.cuda()
-                self.device = "cuda"
+            else:
+                self.device = "cpu"
+                self.torch_model = self.torch_model.cpu()
         except Exception as e:
             print(f"Could not load PyTorch model: {e}")
             self.torch_model = None
+
     
     def preprocess(self, image: np.ndarray) -> np.ndarray:
         """
@@ -169,10 +182,11 @@ class TextOCR:
             }
             
             # Handle different decoder input configurations
-            input_names = [i.name for i in self.decoder_session.get_inputs()]
-            filtered_inputs = {k: v for k, v in decoder_inputs.items() if k in input_names}
+            # input_names = [i.name for i in self.decoder_session.get_inputs()]
+            # filtered_inputs = {k: v for k, v in decoder_inputs.items() if k in input_names}
             
-            outputs = self.decoder_session.run(None, filtered_inputs)
+            # Trust the inputs. If ONNX needs it, it needs it.
+            outputs = self.decoder_session.run(None, decoder_inputs)
             logits = outputs[0]
             
             # Get next token
@@ -261,11 +275,20 @@ class TextOCR:
                 inference_time=inference_time,
                 rerouted=rerouted
             )
-        except Exception as e:
+
+        except (Exception, getattr(ort.capi.onnxruntime_pybind11_state, 'RuntimeException', Exception)) as e:
             print(f"ONNX inference failed: {e}. Falling back to PyTorch.")
             self.use_torch_fallback = True
             if self.torch_model is None:
                 self._init_torch_model()
+            
+            if self.torch_model is None:
+                return OCRResult(
+                    text="[Error: Text Recognition Failed - Model Load Error]",
+                    confidence=0.0,
+                    inference_time=0.0
+                )
+                
             return self._recognize_torch(pil_image, start_time)
     
     def _recognize_torch(self, image: Image.Image, start_time: float) -> OCRResult:
