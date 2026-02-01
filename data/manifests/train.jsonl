@@ -1,0 +1,160 @@
+{"image_path": "data/synthetic/text_000000.png", "ground_truth_text": "Let x be a variable", "mode": "text"}
+{"image_path": "data/synthetic/text_000016.png", "ground_truth_text": "Let x be a variable", "mode": "text"}
+{"image_path": "data/synthetic/math_000004.png", "ground_truth_text": "$E = mc^2$", "mode": "math"}
+{"image_path": "data/synthetic/text_000034.png", "ground_truth_text": "We can solve this by", "mode": "text"}
+{"image_path": "data/synthetic/math_000043.png", "ground_truth_text": "$\\frac{\\partial f}{\\partial x}$", "mode": "math"}
+{"image_path": "data/synthetic/mixed_000038.png", "ground_truth_text": "Calculate the integral $\\int x^2 dx$", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000026.png", "ground_truth_text": "Let x be a variable", "mode": "text"}
+{"image_path": "data/synthetic/text_000023.png", "ground_truth_text": "Suppose that", "mode": "text"}
+{"image_path": "data/synthetic/text_000046.png", "ground_truth_text": "Let x be a variable", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000024.png", "ground_truth_text": "Calculate the integral $\\int x^2 dx$", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000069.png", "ground_truth_text": "We can solve this by", "mode": "text"}
+{"image_path": "data/synthetic/text_000017.png", "ground_truth_text": "We obtain", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000006.png", "ground_truth_text": "Evaluate $\\lim_{x \\to 0} \\frac{\\sin x}{x}$", "mode": "mixed"}
+{"image_path": "data/synthetic/mixed_000031.png", "ground_truth_text": "The solution is $x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000068.png", "ground_truth_text": "Substituting into", "mode": "text"}
+{"image_path": "data/synthetic/math_000059.png", "ground_truth_text": "$\\vec{F} = m\\vec{a}$", "mode": "math"}
+{"image_path": "data/synthetic/text_000042.png", "ground_truth_text": "Given that", "mode": "text"}
+{"image_path": "data/synthetic/math_000039.png", "ground_truth_text": "$\\cos^2\\theta + \\sin^2\\theta = 1$", "mode": "math"}
+{"image_path": "data/synthetic/math_000011.png", "ground_truth_text": "$\\cos^2\\theta + \\sin^2\\theta = 1$", "mode": "math"}
+{"image_path": "data/synthetic/math_000027.png", "ground_truth_text": "$\\sigma = \\sqrt{\\frac{\\sum(x_i - \\mu)^2}{N}}$", "mode": "math"}
+{"image_path": "data/synthetic/mixed_000019.png", "ground_truth_text": "Given $y = mx + b$ find slope", "mode": "mixed"}
+{"image_path": "data/synthetic/mixed_000033.png", "ground_truth_text": "The derivative is $f'(x) = 2x$", "mode": "mixed"}
+{"image_path": "data/synthetic/math_000053.png", "ground_truth_text": "$V = \\frac{4}{3}\\pi r^3$", "mode": "math"}
+{"image_path": "data/synthetic/math_000058.png", "ground_truth_text": "$\\sigma = \\sqrt{\\frac{\\sum(x_i - \\mu)^2}{N}}$", "mode": "math"}
+{"image_path": "data/synthetic/text_000031.png", "ground_truth_text": "Let x be a variable", "mode": "text"}
+{"image_path": "data/synthetic/text_000070.png", "ground_truth_text": "Therefore we have", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000011.png", "ground_truth_text": "We know that $a^2 + b^2 = c^2$", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000048.png", "ground_truth_text": "Assume", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000005.png", "ground_truth_text": "Given $y = mx + b$ find slope", "mode": "mixed"}
+{"image_path": "data/synthetic/math_000036.png", "ground_truth_text": "$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$", "mode": "math"}
+{"image_path": "data/synthetic/text_000055.png", "ground_truth_text": "From the equation", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000000.png", "ground_truth_text": "Given $y = mx + b$ find slope", "mode": "mixed"}
+{"image_path": "data/synthetic/mixed_000009.png", "ground_truth_text": "Calculate the integral $\\int x^2 dx$", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000049.png", "ground_truth_text": "This implies that", "mode": "text"}
+{"image_path": "data/synthetic/text_000015.png", "ground_truth_text": "Example:", "mode": "text"}
+{"image_path": "data/synthetic/text_000053.png", "ground_truth_text": "Using the formula", "mode": "text"}
+{"image_path": "data/synthetic/math_000016.png", "ground_truth_text": "$\\sum_{n=1}^{\\infty} \\frac{1}{n^2}$", "mode": "math"}
+{"image_path": "data/synthetic/mixed_000004.png", "ground_truth_text": "Evaluate $\\lim_{x \\to 0} \\frac{\\sin x}{x}$", "mode": "mixed"}
+{"image_path": "data/synthetic/math_000072.png", "ground_truth_text": "$\\cos^2\\theta + \\sin^2\\theta = 1$", "mode": "math"}
+{"image_path": "data/synthetic/text_000021.png", "ground_truth_text": "Assume", "mode": "text"}
+{"image_path": "data/synthetic/text_000006.png", "ground_truth_text": "It follows that", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000021.png", "ground_truth_text": "The derivative is $f'(x) = 2x$", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000003.png", "ground_truth_text": "It follows that", "mode": "text"}
+{"image_path": "data/synthetic/text_000073.png", "ground_truth_text": "Let x be a variable", "mode": "text"}
+{"image_path": "data/synthetic/math_000049.png", "ground_truth_text": "$\\vec{F} = m\\vec{a}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000057.png", "ground_truth_text": "$A = \\pi r^2$", "mode": "math"}
+{"image_path": "data/synthetic/text_000061.png", "ground_truth_text": "Solution:", "mode": "text"}
+{"image_path": "data/synthetic/math_000055.png", "ground_truth_text": "$\\sigma = \\sqrt{\\frac{\\sum(x_i - \\mu)^2}{N}}$", "mode": "math"}
+{"image_path": "data/synthetic/text_000012.png", "ground_truth_text": "Therefore we have", "mode": "text"}
+{"image_path": "data/synthetic/math_000051.png", "ground_truth_text": "$\\nabla \\cdot \\vec{E} = \\frac{\\rho}{\\epsilon_0}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000042.png", "ground_truth_text": "$A = \\pi r^2$", "mode": "math"}
+{"image_path": "data/synthetic/text_000051.png", "ground_truth_text": "Given that", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000036.png", "ground_truth_text": "Evaluate $\\lim_{x \\to 0} \\frac{\\sin x}{x}$", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000002.png", "ground_truth_text": "Solution:", "mode": "text"}
+{"image_path": "data/synthetic/text_000066.png", "ground_truth_text": "From the equation", "mode": "text"}
+{"image_path": "data/synthetic/text_000050.png", "ground_truth_text": "It follows that", "mode": "text"}
+{"image_path": "data/synthetic/math_000025.png", "ground_truth_text": "$\\frac{\\partial f}{\\partial x}$", "mode": "math"}
+{"image_path": "data/synthetic/text_000037.png", "ground_truth_text": "Consider the function", "mode": "text"}
+{"image_path": "data/synthetic/math_000068.png", "ground_truth_text": "$E = mc^2$", "mode": "math"}
+{"image_path": "data/synthetic/math_000041.png", "ground_truth_text": "$\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000028.png", "ground_truth_text": "$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$", "mode": "math"}
+{"image_path": "data/synthetic/mixed_000028.png", "ground_truth_text": "We know that $a^2 + b^2 = c^2$", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000071.png", "ground_truth_text": "Suppose that", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000027.png", "ground_truth_text": "From $F = ma$ we get", "mode": "mixed"}
+{"image_path": "data/synthetic/mixed_000003.png", "ground_truth_text": "Calculate the integral $\\int x^2 dx$", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000036.png", "ground_truth_text": "By integration", "mode": "text"}
+{"image_path": "data/synthetic/text_000047.png", "ground_truth_text": "By integration", "mode": "text"}
+{"image_path": "data/synthetic/text_000076.png", "ground_truth_text": "Assume", "mode": "text"}
+{"image_path": "data/synthetic/math_000078.png", "ground_truth_text": "$\\int_0^1 x^2 dx$", "mode": "math"}
+{"image_path": "data/synthetic/math_000062.png", "ground_truth_text": "$\\lambda = \\frac{h}{p}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000015.png", "ground_truth_text": "$\\binom{n}{k} = \\frac{n!}{k!(n-k)!}$", "mode": "math"}
+{"image_path": "data/synthetic/text_000039.png", "ground_truth_text": "Solution:", "mode": "text"}
+{"image_path": "data/synthetic/math_000020.png", "ground_truth_text": "$x^2 + y^2 = r^2$", "mode": "math"}
+{"image_path": "data/synthetic/text_000064.png", "ground_truth_text": "Taking the limit as", "mode": "text"}
+{"image_path": "data/synthetic/text_000045.png", "ground_truth_text": "By integration", "mode": "text"}
+{"image_path": "data/synthetic/text_000007.png", "ground_truth_text": "Solution:", "mode": "text"}
+{"image_path": "data/synthetic/text_000075.png", "ground_truth_text": "Proof:", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000018.png", "ground_truth_text": "From $F = ma$ we get", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000038.png", "ground_truth_text": "Assume", "mode": "text"}
+{"image_path": "data/synthetic/math_000009.png", "ground_truth_text": "$\\binom{n}{k} = \\frac{n!}{k!(n-k)!}$", "mode": "math"}
+{"image_path": "data/synthetic/text_000060.png", "ground_truth_text": "The derivative of", "mode": "text"}
+{"image_path": "data/synthetic/text_000008.png", "ground_truth_text": "By integration", "mode": "text"}
+{"image_path": "data/synthetic/math_000050.png", "ground_truth_text": "$A = \\pi r^2$", "mode": "math"}
+{"image_path": "data/synthetic/math_000033.png", "ground_truth_text": "$\\sum_{n=1}^{\\infty} \\frac{1}{n^2}$", "mode": "math"}
+{"image_path": "data/synthetic/text_000040.png", "ground_truth_text": "Therefore we have", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000007.png", "ground_truth_text": "From $F = ma$ we get", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000041.png", "ground_truth_text": "Assume", "mode": "text"}
+{"image_path": "data/synthetic/math_000052.png", "ground_truth_text": "$x^2 + y^2 = r^2$", "mode": "math"}
+{"image_path": "data/synthetic/math_000045.png", "ground_truth_text": "$e^{i\\pi} + 1 = 0$", "mode": "math"}
+{"image_path": "data/synthetic/math_000034.png", "ground_truth_text": "$\\vec{F} = m\\vec{a}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000014.png", "ground_truth_text": "$\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000007.png", "ground_truth_text": "$\\vec{F} = m\\vec{a}$", "mode": "math"}
+{"image_path": "data/synthetic/text_000057.png", "ground_truth_text": "Suppose that", "mode": "text"}
+{"image_path": "data/synthetic/math_000069.png", "ground_truth_text": "$e^{i\\pi} + 1 = 0$", "mode": "math"}
+{"image_path": "data/synthetic/mixed_000035.png", "ground_truth_text": "We know that $a^2 + b^2 = c^2$", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000059.png", "ground_truth_text": "This implies that", "mode": "text"}
+{"image_path": "data/synthetic/text_000063.png", "ground_truth_text": "Proof:", "mode": "text"}
+{"image_path": "data/synthetic/math_000075.png", "ground_truth_text": "$\\int_0^1 x^2 dx$", "mode": "math"}
+{"image_path": "data/synthetic/math_000018.png", "ground_truth_text": "$\\lambda = \\frac{h}{p}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000070.png", "ground_truth_text": "$\\cos^2\\theta + \\sin^2\\theta = 1$", "mode": "math"}
+{"image_path": "data/synthetic/text_000009.png", "ground_truth_text": "Using the formula", "mode": "text"}
+{"image_path": "data/synthetic/math_000065.png", "ground_truth_text": "$\\sigma = \\sqrt{\\frac{\\sum(x_i - \\mu)^2}{N}}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000074.png", "ground_truth_text": "$\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}$", "mode": "math"}
+{"image_path": "data/synthetic/mixed_000008.png", "ground_truth_text": "Evaluate $\\lim_{x \\to 0} \\frac{\\sin x}{x}$", "mode": "mixed"}
+{"image_path": "data/synthetic/mixed_000012.png", "ground_truth_text": "The derivative is $f'(x) = 2x$", "mode": "mixed"}
+{"image_path": "data/synthetic/mixed_000020.png", "ground_truth_text": "The derivative is $f'(x) = 2x$", "mode": "mixed"}
+{"image_path": "data/synthetic/math_000061.png", "ground_truth_text": "$\\sqrt{a^2 + b^2}$", "mode": "math"}
+{"image_path": "data/synthetic/text_000025.png", "ground_truth_text": "Substituting into", "mode": "text"}
+{"image_path": "data/synthetic/text_000032.png", "ground_truth_text": "Substituting into", "mode": "text"}
+{"image_path": "data/synthetic/math_000032.png", "ground_truth_text": "$\\int_0^1 x^2 dx$", "mode": "math"}
+{"image_path": "data/synthetic/text_000013.png", "ground_truth_text": "Taking the limit as", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000014.png", "ground_truth_text": "Given $y = mx + b$ find slope", "mode": "mixed"}
+{"image_path": "data/synthetic/mixed_000002.png", "ground_truth_text": "The derivative is $f'(x) = 2x$", "mode": "mixed"}
+{"image_path": "data/synthetic/math_000040.png", "ground_truth_text": "$\\sqrt{a^2 + b^2}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000002.png", "ground_truth_text": "$\\vec{F} = m\\vec{a}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000024.png", "ground_truth_text": "$\\cos^2\\theta + \\sin^2\\theta = 1$", "mode": "math"}
+{"image_path": "data/synthetic/math_000013.png", "ground_truth_text": "$\\vec{F} = m\\vec{a}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000038.png", "ground_truth_text": "$\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}$", "mode": "math"}
+{"image_path": "data/synthetic/mixed_000029.png", "ground_truth_text": "Calculate the integral $\\int x^2 dx$", "mode": "mixed"}
+{"image_path": "data/synthetic/math_000019.png", "ground_truth_text": "$\\nabla \\cdot \\vec{E} = \\frac{\\rho}{\\epsilon_0}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000035.png", "ground_truth_text": "$\\log_a(xy) = \\log_a x + \\log_a y$", "mode": "math"}
+{"image_path": "data/synthetic/text_000024.png", "ground_truth_text": "From the equation", "mode": "text"}
+{"image_path": "data/synthetic/math_000046.png", "ground_truth_text": "$E = mc^2$", "mode": "math"}
+{"image_path": "data/synthetic/text_000067.png", "ground_truth_text": "Substituting into", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000023.png", "ground_truth_text": "Given $y = mx + b$ find slope", "mode": "mixed"}
+{"image_path": "data/synthetic/math_000001.png", "ground_truth_text": "$E = mc^2$", "mode": "math"}
+{"image_path": "data/synthetic/mixed_000017.png", "ground_truth_text": "The derivative is $f'(x) = 2x$", "mode": "mixed"}
+{"image_path": "data/synthetic/math_000076.png", "ground_truth_text": "$\\log_a(xy) = \\log_a x + \\log_a y$", "mode": "math"}
+{"image_path": "data/synthetic/math_000064.png", "ground_truth_text": "$\\frac{dy}{dx} = 2x$", "mode": "math"}
+{"image_path": "data/synthetic/math_000005.png", "ground_truth_text": "$e^{i\\pi} + 1 = 0$", "mode": "math"}
+{"image_path": "data/synthetic/mixed_000026.png", "ground_truth_text": "Calculate the integral $\\int x^2 dx$", "mode": "mixed"}
+{"image_path": "data/synthetic/math_000006.png", "ground_truth_text": "$x^2 + y^2 = r^2$", "mode": "math"}
+{"image_path": "data/synthetic/text_000079.png", "ground_truth_text": "Proof:", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000001.png", "ground_truth_text": "We know that $a^2 + b^2 = c^2$", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000020.png", "ground_truth_text": "By integration", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000030.png", "ground_truth_text": "Evaluate $\\lim_{x \\to 0} \\frac{\\sin x}{x}$", "mode": "mixed"}
+{"image_path": "data/synthetic/math_000022.png", "ground_truth_text": "$E = mc^2$", "mode": "math"}
+{"image_path": "data/synthetic/math_000060.png", "ground_truth_text": "$E = mc^2$", "mode": "math"}
+{"image_path": "data/synthetic/text_000062.png", "ground_truth_text": "Let x be a variable", "mode": "text"}
+{"image_path": "data/synthetic/text_000027.png", "ground_truth_text": "Therefore we have", "mode": "text"}
+{"image_path": "data/synthetic/math_000079.png", "ground_truth_text": "$E = mc^2$", "mode": "math"}
+{"image_path": "data/synthetic/text_000022.png", "ground_truth_text": "By integration", "mode": "text"}
+{"image_path": "data/synthetic/math_000012.png", "ground_truth_text": "$\\sum_{n=1}^{\\infty} \\frac{1}{n^2}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000077.png", "ground_truth_text": "$\\sqrt{a^2 + b^2}$", "mode": "math"}
+{"image_path": "data/synthetic/text_000043.png", "ground_truth_text": "It follows that", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000015.png", "ground_truth_text": "The derivative is $f'(x) = 2x$", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000005.png", "ground_truth_text": "We obtain", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000032.png", "ground_truth_text": "The derivative is $f'(x) = 2x$", "mode": "mixed"}
+{"image_path": "data/synthetic/mixed_000039.png", "ground_truth_text": "From $F = ma$ we get", "mode": "mixed"}
+{"image_path": "data/synthetic/mixed_000016.png", "ground_truth_text": "The derivative is $f'(x) = 2x$", "mode": "mixed"}
+{"image_path": "data/synthetic/math_000026.png", "ground_truth_text": "$\\frac{\\partial f}{\\partial x}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000023.png", "ground_truth_text": "$\\lambda = \\frac{h}{p}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000066.png", "ground_truth_text": "$\\alpha + \\beta = \\gamma$", "mode": "math"}
+{"image_path": "data/synthetic/math_000029.png", "ground_truth_text": "$\\nabla \\cdot \\vec{E} = \\frac{\\rho}{\\epsilon_0}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000067.png", "ground_truth_text": "$e^{i\\pi} + 1 = 0$", "mode": "math"}
+{"image_path": "data/synthetic/math_000000.png", "ground_truth_text": "$\\frac{dy}{dx} = 2x$", "mode": "math"}
+{"image_path": "data/synthetic/text_000019.png", "ground_truth_text": "It follows that", "mode": "text"}
+{"image_path": "data/synthetic/math_000037.png", "ground_truth_text": "$x^2 + y^2 = r^2$", "mode": "math"}
+{"image_path": "data/synthetic/text_000004.png", "ground_truth_text": "Note that", "mode": "text"}
+{"image_path": "data/synthetic/math_000031.png", "ground_truth_text": "$\\int_0^1 x^2 dx$", "mode": "math"}

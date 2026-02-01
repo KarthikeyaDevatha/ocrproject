@@ -68,20 +68,30 @@ def main():
     if text_model_source == "Fine-Tuned Checkpoint":
         # Scan checkpoints
         import glob
-        checkpoints = sorted(glob.glob("checkpoints/trocr_text_combined/*"))
-        checkpoints = [d for d in checkpoints if os.path.isdir(d)]
+        # Search in both default and combined directories
+        checkpoints = []
+        for d in ["checkpoints/trocr_text_combined", "checkpoints/trocr_text"]:
+            if os.path.exists(d):
+                found = sorted(glob.glob(os.path.join(d, "*")))
+                checkpoints.extend([f for f in found if os.path.isdir(f)])
+        
+        checkpoints = sorted(list(set(checkpoints))) # Deduplicate
         
         if not checkpoints:
-            st.sidebar.warning("No checkpoints found in checkpoints/trocr_text_combined")
+            st.sidebar.warning("No checkpoints found in checkpoints/trocr_text*")
             text_model_source = "Default (Base)"
         else:
-            selected_ckpt = st.sidebar.selectbox(
+            selected_ckpt_name = st.sidebar.selectbox(
                 "Select Checkpoint",
                 [os.path.basename(c) for c in checkpoints],
                 index=len(checkpoints)-1 # Default to latest
             )
-            text_model_dir = os.path.join("checkpoints/trocr_text_combined", selected_ckpt)
-            st.sidebar.info(f"Using: {selected_ckpt}")
+            # Find the full path for the selected name
+            for c in checkpoints:
+                if os.path.basename(c) == selected_ckpt_name:
+                    text_model_dir = c
+                    break
+            st.sidebar.info(f"Using: {selected_ckpt_name}")
             
     # Math Model
     math_model_source = st.sidebar.radio(

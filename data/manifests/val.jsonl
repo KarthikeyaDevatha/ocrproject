@@ -1,0 +1,20 @@
+{"image_path": "data/synthetic/text_000010.png", "ground_truth_text": "We can solve this by", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000025.png", "ground_truth_text": "From $F = ma$ we get", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000018.png", "ground_truth_text": "Let x be a variable", "mode": "text"}
+{"image_path": "data/synthetic/math_000010.png", "ground_truth_text": "$\\alpha + \\beta = \\gamma$", "mode": "math"}
+{"image_path": "data/synthetic/math_000063.png", "ground_truth_text": "$\\sqrt{a^2 + b^2}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000048.png", "ground_truth_text": "$V = \\frac{4}{3}\\pi r^3$", "mode": "math"}
+{"image_path": "data/synthetic/text_000058.png", "ground_truth_text": "Therefore we have", "mode": "text"}
+{"image_path": "data/synthetic/math_000056.png", "ground_truth_text": "$\\sqrt{a^2 + b^2}$", "mode": "math"}
+{"image_path": "data/synthetic/math_000017.png", "ground_truth_text": "$e^{i\\pi} + 1 = 0$", "mode": "math"}
+{"image_path": "data/synthetic/text_000033.png", "ground_truth_text": "We can solve this by", "mode": "text"}
+{"image_path": "data/synthetic/text_000044.png", "ground_truth_text": "Using the formula", "mode": "text"}
+{"image_path": "data/synthetic/mixed_000037.png", "ground_truth_text": "We know that $a^2 + b^2 = c^2$", "mode": "mixed"}
+{"image_path": "data/synthetic/math_000047.png", "ground_truth_text": "$\\sum_{n=1}^{\\infty} \\frac{1}{n^2}$", "mode": "math"}
+{"image_path": "data/synthetic/mixed_000022.png", "ground_truth_text": "Calculate the integral $\\int x^2 dx$", "mode": "mixed"}
+{"image_path": "data/synthetic/text_000030.png", "ground_truth_text": "Let x be a variable", "mode": "text"}
+{"image_path": "data/synthetic/math_000003.png", "ground_truth_text": "$E = mc^2$", "mode": "math"}
+{"image_path": "data/synthetic/text_000074.png", "ground_truth_text": "Proof:", "mode": "text"}
+{"image_path": "data/synthetic/text_000065.png", "ground_truth_text": "By integration", "mode": "text"}
+{"image_path": "data/synthetic/text_000035.png", "ground_truth_text": "Consider the function", "mode": "text"}
+{"image_path": "data/synthetic/text_000054.png", "ground_truth_text": "Note that", "mode": "text"}

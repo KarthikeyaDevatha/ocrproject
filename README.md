@@ -5,6 +5,8 @@ A local, privacy-focused OCR system fine-tuned for:
 1.  **Handwritten English** (Scientific/Academic domain).
 2.  **Mathematical Expressions** (LaTeX output).
 
+This project presents a Document AI Agent for Handwritten Text Extraction that processes images of handwritten lab records and notes in educational environments. The system utilizes Vision Transformer-based Optical Character Recognition architecture as the core engine to extract textual content from handwritten academic documents and convert them into digital text files.
+
 Built with **TrOCR** (Vision Encoder-Decoder) and **YOLOv8** (Layout Detection).
 
 ---

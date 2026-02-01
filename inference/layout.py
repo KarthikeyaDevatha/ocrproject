@@ -256,6 +256,11 @@ class LayoutDetector:
         # Postprocess
         detections = self.postprocess(outputs[0], metadata)
         
+        # Fallback if no detections found (e.g. model weak or domain mismatch)
+        if not detections:
+            # print("Warning: No layout detected by model -> Using CV fallback")
+            return self._fallback_detection(image)
+        
         return detections
     
     def _fallback_detection(self, image: np.ndarray) -> List[Detection]:

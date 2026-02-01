@@ -1,0 +1,33 @@
+
+# Valid dockerignore
+.git
+.gitignore
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+venv
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.DS_Store
+
+# Ignore large data dirs (mount them if needed?)
+# Usually we want to bake in the *code*, but data might be volume mounted.
+# For this app, we might want to include detected layout models, but exclude raw training data.
+data/raw
+data/synthetic
+data/processed
+checkpoints/
+# But we DO need the models/ folder
+# models/ is fine (assuming it contains finalized models)

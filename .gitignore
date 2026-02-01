@@ -100,3 +100,6 @@ outputs/*.md
 *.safetensors
 *.pt
 *.pth
+
+# Raw training data
+traindatahere/
