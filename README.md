@@ -1,4 +1,4 @@
-# Nexus OCR Handwritten Scientific Document Intelligence
+#  OCR Handwritten Scientific Document Intelligence
 
 Production-grade modular OCR pipeline for assignment understanding with specialized pretrained models.
 
