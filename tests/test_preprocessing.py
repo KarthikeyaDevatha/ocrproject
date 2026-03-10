@@ -1,4 +1,7 @@
-import cv2
+import pytest
+
+cv2 = pytest.importorskip("cv2")
+pytest.importorskip("numpy")
 
 from backend.pipelines.preprocessing import (
     adaptive_threshold,

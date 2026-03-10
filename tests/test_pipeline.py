@@ -1,3 +1,8 @@
+import pytest
+
+pytest.importorskip("cv2")
+pytest.importorskip("numpy")
+
 from backend.pipelines.document_processor import DocumentProcessor
 
 

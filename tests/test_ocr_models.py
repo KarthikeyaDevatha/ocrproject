@@ -1,4 +1,6 @@
-import cv2
+import pytest
+
+cv2 = pytest.importorskip("cv2")
 
 from backend.models.equation_engine import EquationOCR
 
