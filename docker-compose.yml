@@ -1,0 +1,50 @@
+version: "3.9"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MODEL_CACHE=/models
+    volumes:
+      - model_cache:/models
+    depends_on:
+      - redis
+
+  ocr_worker:
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile
+    command: python -m backend.api.main
+    environment:
+      - MODEL_CACHE=/models
+    volumes:
+      - model_cache:/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deployment/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - api
+
+volumes:
+  model_cache:

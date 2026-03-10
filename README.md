@@ -1,70 +1,67 @@
+# Nexus OCR Handwritten Scientific Document Intelligence
 
-# Handwritten OCR System (Text & Math)
+Production-grade modular OCR pipeline for assignment understanding with specialized pretrained models.
 
-A local, privacy-focused OCR system fine-tuned for:
-1.  **Handwritten English** (Scientific/Academic domain).
-2.  **Mathematical Expressions** (LaTeX output).
+## Architecture
 
-This project presents a Document AI Agent for Handwritten Text Extraction that processes images of handwritten lab records and notes in educational environments. The system utilizes Vision Transformer-based Optical Character Recognition architecture as the core engine to extract textual content from handwritten academic documents and convert them into digital text files.
+`preprocess -> layout detection -> OCR routing -> symbol correction -> semantic parser -> JSON`
 
-Built with **TrOCR** (Vision Encoder-Decoder) and **YOLOv8** (Layout Detection).
+Key modules:
+- Preprocessing: OpenCV deskew/perspective/thresholding (`backend/pipelines/preprocessing.py`)
+- Layout detector: LayoutLMv3 integration + CV fallback (`backend/pipelines/layout_detector.py`)
+- OCR engines:
+  - TrOCR handwriting (`backend/models/trocr_engine.py`)
+  - PaddleOCR printed text (`backend/models/paddleocr_engine.py`)
+  - Pix2Tex + UniMERNet equations (`backend/models/equation_engine.py`)
+- Semantic parsing and problem typing (`backend/pipelines/semantic_parser.py`)
+- Orchestration (`backend/pipelines/document_processor.py`)
+- FastAPI API (`backend/api/main.py`)
 
----
+## Quickstart
 
-## 🚀 Quick Start
-
-### 1. Installation
 ```bash
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
+uvicorn backend.api.main:app --reload --port 8000
 ```
 
-### 2. Run the Demo App
+Health check:
+
 ```bash
-streamlit run app/app.py
+curl http://localhost:8000/health
 ```
-Upload an image to see detection types (Text vs Math) and OCR results.
 
-### 3. Inference from Command Line
+## Docker
+
 ```bash
-python3 inference/pipeline.py --image path/to/image.png --output result.md
+docker-compose up --build
 ```
 
----
+## API
 
-## 🛠 Project Structure
+- `POST /upload` -> async job id (image/pdf)
+- `GET /result/{job_id}` -> result status
+- `POST /process` -> sync base64 processing
+- `GET /health` -> readiness
 
-### Data & Training
-- `data/scripts/`: Ingestion scripts for IAM, MathWriting, and Custom datasets.
-- `training/`: Training scripts.
-  - `train_trocr_text.py`: Fine-tune TrOCR (supports `--augment`).
-  - `train_math_model.py`: Script for Math OCR (HF Streaming).
+## Dataset tools
 
-### Optimization (Accuracy Recovery)
-We use a high-precision pipeline to eliminate "dot -> 0" errors:
-1.  **Preprocessing**: `data/scripts/preprocess_lines.py` removes underlines and boosts dots.
-2.  **Verification**: `evaluation/verify_accuracy.py` audits "Zero Hallucination Rate".
-3.  **Metrics**: `evaluation/advanced_metrics.py` tracks lexical drift.
+- `datasets/loaders/crohme_loader.py`
+- `datasets/loaders/im2latex_loader.py`
+- `datasets/loaders/publaynet_loader.py`
+- `datasets/generators/synthetic_math.py`
 
----
+## Notes
 
-## 🧠 Models
+The system prefers pretrained models and gracefully falls back when a model dependency or weight is unavailable in local runtime.
 
-| Type | Model Base | Status |
-| :--- | :--- | :--- |
-| **Text** | `microsoft/trocr-small-handwritten` | Fine-Tuning (Phase 2) |
-| **Math** | `microsoft/trocr-base-printed` | Planned |
-| **Layout** | `ultralytics/yolov8n` | Detection Ready |
 
----
+## Training status report
 
-## 🧪 Evaluation
-
-To verify the model against specific failure modes (halucinated zeros):
 ```bash
-python3 evaluation/verify_accuracy.py --model_path checkpoints/trocr_text_accuracy_small/epoch_1
+python training/report_status.py
+cat reports/project_status.md
 ```
 
----
-
-## 📝 License
-MIT License. Local Use Only.
+This generates machine-readable status in `reports/project_status.json` and a human report in `reports/project_status.md`.

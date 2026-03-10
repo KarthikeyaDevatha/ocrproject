@@ -1,0 +1,60 @@
+{
+  "dependency_status": {
+    "numpy": false,
+    "cv2": false,
+    "fastapi": false,
+    "torch": false,
+    "transformers": false,
+    "paddleocr": false,
+    "pix2tex": false,
+    "redis": false
+  },
+  "dataset_status": {
+    "CROHME": {
+      "available": false,
+      "path": ""
+    },
+    "Im2LaTeX-100K": {
+      "available": false,
+      "path": ""
+    },
+    "HME100K": {
+      "available": false,
+      "path": ""
+    },
+    "NTCIR-12": {
+      "available": false,
+      "path": ""
+    },
+    "PubLayNet": {
+      "available": false,
+      "path": ""
+    },
+    "DocBank": {
+      "available": false,
+      "path": ""
+    },
+    "arXiv": {
+      "available": false,
+      "path": ""
+    },
+    "IAM": {
+      "available": false,
+      "path": ""
+    },
+    "CVL": {
+      "available": false,
+      "path": ""
+    },
+    "Bentham": {
+      "available": false,
+      "path": ""
+    }
+  },
+  "training_ready": false,
+  "recommendations": [
+    "Install missing dependencies from requirements.txt.",
+    "Download at least one core dataset (CROHME or Im2LaTeX-100K) before training.",
+    "Use training/train_trocr_text.py and training/train_math_model.py for first-pass fine-tuning."
+  ]
+}
