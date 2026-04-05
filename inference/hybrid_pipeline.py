@@ -168,11 +168,15 @@ class HybridPipeline:
         img_np = np.array(pil_image)
         if len(img_np.shape) == 2:
             img_np = cv2.cvtColor(img_np, cv2.COLOR_GRAY2BGR)
+        elif img_np.shape[2] == 4:
+            img_np = cv2.cvtColor(img_np, cv2.COLOR_RGBA2BGR)
+        else:
+            img_np = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
         
-        # Apply CLAHE to crop for better contrast
-        enhanced = full_preprocess(img_np, profile)
+        # Apply CLAHE to crop for better contrast; skip deskew for lines
+        enhanced = full_preprocess(img_np, profile, do_deskew=False)
         
-        return to_rgb_for_ocr(enhanced)
+        return Image.fromarray(enhanced)
 
     # ========================================================================
     # TrOCR INFERENCE
