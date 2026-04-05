@@ -133,7 +133,13 @@ class HybridPipeline:
             self.trocr_model_name
         )
         
-        self._trocr_device = "cuda" if torch.cuda.is_available() else "cpu"
+        if torch.cuda.is_available():
+            self._trocr_device = "cuda"
+        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            self._trocr_device = "mps"
+        else:
+            self._trocr_device = "cpu"
+            
         self._trocr_model = self._trocr_model.to(self._trocr_device)
         self._trocr_model.eval()
         

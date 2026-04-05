@@ -129,7 +129,7 @@ def main():
     model_size = st.sidebar.radio(
         "Model Size",
         ["large", "base"],
-        index=0,
+        index=1,
         help="Large = accurate (CER ~2.89%), Base = fast (CER ~3.8%)"
     )
 
