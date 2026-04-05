@@ -11,7 +11,25 @@ import onnxruntime as ort
 from PIL import Image
 from typing import Tuple, Optional, List
 from dataclasses import dataclass
-from transformers import TrOCRProcessor
+from transformers import TrOCRProcessor, AutoImageProcessor
+
+
+def _load_trocr_processor(model_name_or_path: str) -> TrOCRProcessor:
+    """
+    Load TrOCRProcessor with transformers 5.x compatibility.
+    Explicitly loads the slow tokenizer to avoid the sentencepiece/tiktoken
+    fast tokenizer conversion bug in transformers >= 5.0.
+    """
+    try:
+        # Try normal loading first (works on older transformers)
+        return TrOCRProcessor.from_pretrained(model_name_or_path, use_fast=False)
+    except (ValueError, ImportError):
+        # Fallback: build processor from components with explicit slow tokenizer
+        from transformers import XLMRobertaTokenizer
+        print(f"Fast tokenizer failed, loading slow tokenizer for: {model_name_or_path}")
+        image_processor = AutoImageProcessor.from_pretrained(model_name_or_path)
+        tokenizer = XLMRobertaTokenizer.from_pretrained(model_name_or_path)
+        return TrOCRProcessor(image_processor=image_processor, tokenizer=tokenizer)
 
 
 @dataclass
@@ -82,10 +100,10 @@ class MathOCR:
         )
         
         if local_tokenizer_valid:
-            self.processor = TrOCRProcessor.from_pretrained(tokenizer_path, use_fast=False)
+            self.processor = _load_trocr_processor(tokenizer_path)
         else:
             print(f"Loading default processor for math (tokenizer not found or incomplete at {tokenizer_path})")
-            self.processor = TrOCRProcessor.from_pretrained("microsoft/trocr-small-handwritten", use_fast=False)
+            self.processor = _load_trocr_processor("microsoft/trocr-small-handwritten")
         
         # Fallback mode
         self.use_torch_fallback = self.encoder_session is None or self.decoder_session is None

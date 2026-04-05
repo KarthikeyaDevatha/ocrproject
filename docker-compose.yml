@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: nexus_ocr_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - model_cache:/root/.cache/huggingface
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - LLM_API_KEY=${LLM_API_KEY}
+    depends_on:
+      - redis
+    command: uvicorn backend.api.main:app --host 0.0.0.0 --port 8000 --reload
+
+  ocr_worker:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: nexus_ocr_worker
+    volumes:
+      - .:/app
+      - model_cache:/root/.cache/huggingface
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - LLM_API_KEY=${LLM_API_KEY}
+    depends_on:
+      - redis
+    # Using rq worker targeting the document_processing queue
+    command: rq worker -u redis://redis:6379/0 document_processing
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  redis:
+    image: redis:7-alpine
+    container_name: nexus_ocr_redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  model_cache:

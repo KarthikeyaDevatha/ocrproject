@@ -65,6 +65,7 @@ def evaluate_checkpoint(
             encoder_path=os.path.join(checkpoint_path, "encoder_model.onnx"),
             decoder_path=os.path.join(checkpoint_path, "decoder_model.onnx"),
             tokenizer_path=checkpoint_path,
+            model_path=checkpoint_path, # Pass checkpoint path for fallback loading
             device=device
         )
         

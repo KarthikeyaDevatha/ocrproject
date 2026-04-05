@@ -74,7 +74,7 @@ class PipelineConfig:
     
     # OCR
     max_new_tokens: int = 100
-    num_beams: int = 4
+    num_beams: int = 1
     ocr_timeout: float = 5.0
     confidence_threshold: float = 0.4
     
@@ -430,6 +430,12 @@ def main():
         action="store_true",
         help="Disable confidence-based rerouting"
     )
+    parser.add_argument(
+        "--num-beams",
+        type=int,
+        default=1,
+        help="Beam search width (default: 1 for speed)"
+    )
     
     args = parser.parse_args()
     
@@ -441,6 +447,7 @@ def main():
         device=args.device,
         confidence_threshold=args.confidence_threshold,
         enable_rerouting=not args.no_rerouting,
+        num_beams=args.num_beams,
         debug_output=args.debug,
         save_debug_images=args.save_debug_image is not None
     )
