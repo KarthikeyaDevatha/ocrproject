@@ -63,9 +63,9 @@ def draw_line_boxes(image: np.ndarray, line_results, show_tags: bool = True) -> 
     overlay = image.copy()
 
     color_map = {
-        "ACCEPTED": (0, 200, 0),       # Green
-        "LOW_CONFIDENCE": (0, 165, 255), # Orange
-        "FAILED": (0, 0, 255),          # Red
+        "ACCEPTED": (0, 200, 0),           # Green
+        "RETRY_REQUIRED": (0, 165, 255),   # Orange
+        "FAILED_EXTRACTION": (0, 0, 255),  # Red
     }
 
     for lr in line_results:
@@ -95,11 +95,13 @@ def draw_line_boxes(image: np.ndarray, line_results, show_tags: bool = True) -> 
 def tag_badge(tag: str) -> str:
     """Return colored badge for confidence tag."""
     if tag == "ACCEPTED":
-        return "🟢 ACCEPTED"
-    elif tag == "LOW_CONFIDENCE":
-        return "🟡 LOW CONFIDENCE"
+        return "🟢 ACCEPTED (HIGH CONFIDENCE)"
+    elif tag == "RETRY_REQUIRED":
+        return "🟡 RETRY REQUIRED"
+    elif tag == "FAILED_EXTRACTION":
+        return "🔴 FAILED EXTRACTION"
     else:
-        return "🔴 FAILED"
+        return f"⚪ {tag}"
 
 
 # ============================================================================
@@ -237,11 +239,32 @@ def main():
                         # Stats row
                         stats = result.stats
                         if isinstance(stats, dict) and "lines_detected" in stats:
-                            sc1, sc2, sc3, sc4 = st.columns(4)
+                            sc1, sc2, sc3, sc4, sc5 = st.columns(5)
                             sc1.metric("Lines", stats.get("lines_detected", 0))
                             sc2.metric("Accepted", stats.get("lines_accepted", 0))
-                            sc3.metric("Low Conf", stats.get("lines_low_conf", 0))
-                            sc4.metric("Retries", stats.get("retries", 0))
+                            sc3.metric("Retried", stats.get("retries", 0))
+                            sc4.metric("Fused", stats.get("fusions", 0))
+                            sc5.metric("Math ✓", stats.get("math_validations", 0))
+
+                        # Math validation result
+                        if hasattr(result, 'math_validation') and result.math_validation:
+                            mv = result.math_validation
+                            doc = mv.get('document_level', {})
+                            if doc.get('is_math'):
+                                st.subheader("🧮 Math Validation")
+                                if doc.get('validated'):
+                                    st.success(f"✅ Arithmetic verified! Boost: +{mv.get('document_boost', 0):.2f}")
+                                    if doc.get('equation_check'):
+                                        st.info(f"Equation: {doc['equation_check']}")
+                                    if doc.get('sum_check'):
+                                        st.info(f"Sum check: {doc['sum_check']}")
+                                    if doc.get('mean_check'):
+                                        st.info(f"Mean check: {doc['mean_check']}")
+                                else:
+                                    st.warning("⚠️ Math detected but consistency check failed")
+                                nums = mv.get('numbers_in_output', [])
+                                if nums:
+                                    st.caption(f"Numbers found: {nums}")
 
                         st.divider()
 
@@ -253,7 +276,7 @@ def main():
                                 overlay = draw_line_boxes(img_cv, result.lines)
                                 st.image(
                                     cv2.cvtColor(overlay, cv2.COLOR_BGR2RGB),
-                                    caption="🟢 Accepted  🟡 Low Confidence  🔴 Failed",
+                                    caption="🟢 Accepted  🟡 Retry Required  🔴 Failed Extraction",
                                     use_container_width=True
                                 )
 
@@ -286,6 +309,17 @@ def main():
                                 st.write(f"Confidence: {lr.confidence:.4f} | Engine: {lr.engine_used}")
                                 if lr.retried:
                                     st.caption("↩️ Retried with fallback engine")
+                                if hasattr(lr, 'fused') and lr.fused:
+                                    st.caption("🔀 Multi-engine fusion applied")
+                                if hasattr(lr, 'math_validated') and lr.math_validated:
+                                    st.caption("🧮 Math validation passed")
+                                details = lr.confidence_details
+                                if details:
+                                    cols = st.columns(4)
+                                    cols[0].caption(f"Token: {details.get('token_confidence', 'N/A')}")
+                                    cols[1].caption(f"Alpha: {details.get('alpha_ratio', 'N/A')}")
+                                    cols[2].caption(f"Math boost: {details.get('math_boost', 0):.3f}")
+                                    cols[3].caption(f"Nums: {details.get('numbers_found', [])}")
                                 st.divider()
 
                         # Pipeline log

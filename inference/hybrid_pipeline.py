@@ -1,18 +1,25 @@
 """
-Hybrid Pipeline Orchestrator for Adaptive OCR Agent v2.0.
+Hybrid Pipeline Orchestrator v2.1 for Adaptive OCR Agent.
+
+FIXES FROM EVALUATOR FEEDBACK:
+1. Strict confidence thresholds (0.85/0.65) with unambiguous labels
+2. Math-aware semantic validation with arithmetic consistency checks
+3. Improved line segmentation (padding, preprocessing on line crops)
+4. Smart engine routing (handwritten→TrOCR, math-heavy→Mathpix, mixed→both)
+5. Multi-engine voting/fusion for RETRY_REQUIRED lines
+6. Clear output labels: ACCEPTED / RETRY_REQUIRED / FAILED_EXTRACTION
 
 Master pipeline combining:
 - Decision Engine (feature-based routing)
-- CRAFT/Contour Line Detection
+- CRAFT/Contour Line Detection with improved padding
 - Dual Preprocessing Profiles (CLAHE clean/degraded)
 - TrOCR-large (local handwriting OCR)
 - Mathpix API (cloud math OCR)
 - Arithmetic Pipeline (digit extraction)
-- Composite Confidence Gate (3-tier tagging)
+- Composite Confidence Gate v2 (strict thresholds + math validation)
+- Voting/Fusion Layer (multi-engine consensus)
 - Enhanced Post-Processing (spell + domain + math)
 - Pipeline Logging
-
-4 Modes: auto | mathpix | trocr | arithmetic
 """
 
 import os
@@ -27,7 +34,7 @@ from dataclasses import dataclass, field
 from inference.decision_engine import DecisionEngine, EngineDecision
 from inference.preprocessing_profiles import full_preprocess, apply_profile, to_rgb_for_ocr
 from inference.line_detector import LineDetector
-from inference.confidence_gate import CompositeConfidenceGate, ConfidenceResult
+from inference.confidence_gate import CompositeConfidenceGate, ConfidenceResult, MathValidator
 from inference.mathpix_ocr import MathpixOCR, MathpixResult
 from inference.enhanced_postprocessor import PostProcessor
 from inference.pipeline_logger import PipelineLogger
@@ -38,10 +45,12 @@ class LineResult:
     """Result for a single detected text line."""
     text: str
     confidence: float
-    tag: str  # ACCEPTED | LOW_CONFIDENCE | FAILED
+    tag: str  # ACCEPTED | RETRY_REQUIRED | FAILED_EXTRACTION
     engine_used: str
     bbox: Tuple[int, int, int, int] = (0, 0, 0, 0)
     retried: bool = False
+    fused: bool = False
+    math_validated: bool = False
     confidence_details: dict = field(default_factory=dict)
 
 
@@ -60,14 +69,15 @@ class PipelineResult:
     processing_time: float
     stats: dict = field(default_factory=dict)
     mathpix_result: Optional[dict] = None
+    math_validation: Optional[dict] = None
 
 
 class HybridPipeline:
     """
-    Adaptive OCR Agent — 4-mode orchestrator.
+    Adaptive OCR Agent v2.1 — 4-mode orchestrator with semantic validation.
     
     Modes:
-    - auto: Analyze image → decide engine → confidence gate → retry if needed
+    - auto: Analyze image → smart routing → confidence gate → retry/fuse → validate
     - mathpix: Force Mathpix API (requires credentials)
     - trocr: Force TrOCR-large local inference
     - arithmetic: Force ArithmeticPipeline for digit extraction
@@ -87,8 +97,9 @@ class HybridPipeline:
         
         # Components
         self.decision_engine = DecisionEngine()
-        self.line_detector = LineDetector(use_craft=True)
+        self.line_detector = LineDetector(use_craft=True, pad=10)  # Increased padding
         self.confidence_gate = CompositeConfidenceGate()
+        self.math_validator = MathValidator()
         self.mathpix = MathpixOCR()
         self.postprocessor = PostProcessor()
         self.logger = PipelineLogger(verbose=verbose)
@@ -146,6 +157,24 @@ class HybridPipeline:
         self.logger.info(f"TrOCR loaded on {self._trocr_device}", "MODEL")
 
     # ========================================================================
+    # PREPROCESSING ON LINE CROPS (FIX #3: Better line capture)
+    # ========================================================================
+
+    def _preprocess_crop(self, pil_image: Image.Image, profile: str = "clean") -> Image.Image:
+        """
+        Apply contrast enhancement to individual line crops.
+        Improves TrOCR accuracy on degraded/thin handwriting.
+        """
+        img_np = np.array(pil_image)
+        if len(img_np.shape) == 2:
+            img_np = cv2.cvtColor(img_np, cv2.COLOR_GRAY2BGR)
+        
+        # Apply CLAHE to crop for better contrast
+        enhanced = full_preprocess(img_np, profile)
+        
+        return to_rgb_for_ocr(enhanced)
+
+    # ========================================================================
     # TrOCR INFERENCE
     # ========================================================================
 
@@ -154,9 +183,6 @@ class HybridPipeline:
     ) -> Tuple[str, Optional[list], float]:
         """
         Run TrOCR on a single line crop.
-        
-        Args:
-            pil_image: PIL Image of a single text line
         
         Returns:
             Tuple of (decoded_text, score_tensors, raw_confidence)
@@ -198,12 +224,7 @@ class HybridPipeline:
         pil_image: Image.Image,
         image_path: Optional[str] = None
     ) -> Tuple[str, Optional[list]]:
-        """
-        Run a specific OCR engine on an image.
-        
-        Returns:
-            Tuple of (text, scores)
-        """
+        """Run a specific OCR engine on an image."""
         if engine == "mathpix" and image_path:
             result = self.mathpix.recognize_image(image_path)
             if result.error:
@@ -243,6 +264,36 @@ class HybridPipeline:
         return fallback_map.get(current_engine)
 
     # ========================================================================
+    # SMART ENGINE ROUTING (FIX #4)
+    # ========================================================================
+
+    def _smart_route(
+        self,
+        features: dict,
+        available_engines: List[str]
+    ) -> str:
+        """
+        Smart engine routing based on image content analysis.
+        
+        Rules:
+        - handwritten text only → TrOCR
+        - math-heavy content → Mathpix (if available)
+        - mixed content → run both engines
+        - simple arithmetic → Arithmetic pipeline
+        """
+        math_density = features.get("math_density", 0)
+        is_arithmetic = features.get("is_arithmetic", False)
+        
+        if is_arithmetic and "arithmetic" in available_engines:
+            return "arithmetic"
+        elif math_density > 0.3 and "mathpix" in available_engines:
+            return "mathpix"
+        elif math_density > 0.15 and "mathpix" in available_engines:
+            return "both"  # Run both engines, fuse results
+        else:
+            return "trocr"
+
+    # ========================================================================
     # MAIN PIPELINE
     # ========================================================================
 
@@ -275,7 +326,7 @@ class HybridPipeline:
         if image is None:
             return PipelineResult(
                 text="", lines=[], overall_confidence=0.0,
-                overall_tag="FAILED", engine_used="none",
+                overall_tag="FAILED_EXTRACTION", engine_used="none",
                 profile_used="none", mode=active_mode,
                 features={}, log=self.logger.format_for_display(),
                 processing_time=time.time() - start_time,
@@ -308,7 +359,7 @@ class HybridPipeline:
             return PipelineResult(
                 text="No readable content detected.",
                 lines=[], overall_confidence=0.0,
-                overall_tag="FAILED", engine_used="none",
+                overall_tag="FAILED_EXTRACTION", engine_used="none",
                 profile_used=decision.profile, mode=active_mode,
                 features=decision.features,
                 log=self.logger.format_for_display(),
@@ -318,7 +369,12 @@ class HybridPipeline:
         
         # Override profile if requested
         profile = force_profile or decision.profile
-        engine = decision.engine if active_mode == "auto" else "trocr"
+        
+        # Smart routing (FIX #4)
+        if active_mode == "auto":
+            engine = self._smart_route(decision.features, available_engines)
+        else:
+            engine = "trocr"
         
         # Special case: Mathpix for full image (not per-line)
         if engine == "mathpix":
@@ -328,68 +384,92 @@ class HybridPipeline:
         # Step 2: Preprocess
         preprocessed = full_preprocess(image, profile)
         
-        # Step 3: Line detection
+        # Step 3: Line detection with improved padding
         self.logger.info("Detecting text lines", "DETECT")
         line_crops = self.line_detector.detect_and_crop(
             image_path, image=image
         )
         self.logger.info(f"Detected {len(line_crops)} text lines", "DETECT")
         
-        # Step 4: Per-line OCR with confidence gate
+        # Step 4: Per-line OCR with confidence gate + retry + fusion
         line_results = []
         all_texts = []
+        run_both = (engine == "both")
+        primary_engine = "trocr"
         
         for idx, (crop_pil, bbox) in enumerate(line_crops):
+            # Preprocess individual crop (FIX #3)
+            enhanced_crop = self._preprocess_crop(crop_pil, profile)
+            
             # Run primary engine
-            text, scores = self._run_engine(engine, crop_pil, image_path)
+            text, scores = self._run_engine(primary_engine, enhanced_crop, image_path)
             confidence = self.confidence_gate.score(text, scores)
             
             retried = False
+            fused = False
+            final_engine = primary_engine
             
-            # Confidence gate: retry if needed
-            if self.confidence_gate.should_retry(confidence):
-                fallback = self._get_fallback_engine(engine)
+            # ---- MULTI-ENGINE VOTING/FUSION (FIX #5) ----
+            if run_both and self.mathpix.is_available:
+                # Run both engines unconditionally for mixed content
+                alt_text, alt_scores = self._run_engine("mathpix", enhanced_crop, image_path)
+                alt_confidence = self.confidence_gate.score(alt_text, alt_scores)
+                
+                # Fuse results
+                text, confidence = self.confidence_gate.fuse_results(
+                    confidence, text, alt_confidence, alt_text
+                )
+                fused = True
+                self.logger.info(
+                    f"Line {idx}: Fused TrOCR+Mathpix → {confidence.tag}", "FUSION"
+                )
+            
+            # ---- RETRY LOGIC (FIX #1: Only retry RETRY_REQUIRED) ----
+            elif confidence.tag == "RETRY_REQUIRED":
+                fallback = self._get_fallback_engine(primary_engine)
                 if fallback:
                     self.logger.log_retry(
-                        idx, engine, fallback, confidence.composite
+                        idx, primary_engine, fallback, confidence.composite
                     )
                     alt_text, alt_scores = self._run_engine(
-                        fallback, crop_pil, image_path
+                        fallback, enhanced_crop, image_path
                     )
                     alt_confidence = self.confidence_gate.score(
                         alt_text, alt_scores
                     )
                     
-                    # Pick best
-                    choice = self.confidence_gate.pick_best(
-                        confidence, alt_confidence
+                    # Fuse instead of simple pick (FIX #5)
+                    text, confidence = self.confidence_gate.fuse_results(
+                        confidence, text, alt_confidence, alt_text
                     )
-                    if choice == 1:
-                        text, scores = alt_text, alt_scores
-                        confidence = alt_confidence
-                        engine = fallback
-                        retried = True
+                    retried = True
+                    fused = True
             
             self.logger.log_confidence(
                 idx, confidence.composite, confidence.tag,
-                engine, retried
+                final_engine, retried
             )
             
             line_results.append(LineResult(
                 text=text,
                 confidence=confidence.composite,
                 tag=confidence.tag,
-                engine_used=engine,
+                engine_used=final_engine,
                 bbox=bbox,
                 retried=retried,
+                fused=fused,
+                math_validated=confidence.math_validated,
                 confidence_details={
                     "token_confidence": confidence.token_confidence,
                     "alpha_ratio": confidence.alpha_ratio,
-                    "length_ok": confidence.length_ok
+                    "length_ok": confidence.length_ok,
+                    "math_boost": confidence.math_boost,
+                    "math_validated": confidence.math_validated,
+                    "numbers_found": confidence.numbers_found,
                 }
             ))
             
-            if confidence.tag != "FAILED":
+            if confidence.tag != "FAILED_EXTRACTION":
                 all_texts.append(text)
         
         # Step 5: Post-processing
@@ -402,19 +482,20 @@ class HybridPipeline:
         # Step 6: Assemble output
         final_text = "\n".join(processed_texts)
         
-        # Overall confidence = mean of accepted/low-confidence lines
-        valid_scores = [lr.confidence for lr in line_results if lr.tag != "FAILED"]
+        # Step 7: Full-document math validation (FIX #2)
+        doc_math_boost, doc_math_details = self.math_validator.validate_arithmetic(final_text)
+        
+        # Overall confidence = mean of non-failed lines + doc-level math boost
+        valid_scores = [lr.confidence for lr in line_results if lr.tag != "FAILED_EXTRACTION"]
         overall_confidence = (
             sum(valid_scores) / len(valid_scores)
         ) if valid_scores else 0.0
         
-        # Overall tag
-        if all(lr.tag == "ACCEPTED" for lr in line_results):
-            overall_tag = "ACCEPTED"
-        elif any(lr.tag == "FAILED" for lr in line_results):
-            overall_tag = "LOW_CONFIDENCE"
-        else:
-            overall_tag = "ACCEPTED" if overall_confidence >= 0.72 else "LOW_CONFIDENCE"
+        # Apply document-level math boost
+        overall_confidence = max(0.0, min(1.0, overall_confidence + doc_math_boost))
+        
+        # Overall tag with strict thresholds
+        overall_tag = self.confidence_gate.classify(overall_confidence)
         
         processing_time = time.time() - start_time
         self.logger.log_final(overall_tag, processing_time, len(line_results))
@@ -424,7 +505,7 @@ class HybridPipeline:
             lines=line_results,
             overall_confidence=round(overall_confidence, 4),
             overall_tag=overall_tag,
-            engine_used=engine,
+            engine_used=primary_engine if not run_both else "trocr+mathpix",
             profile_used=profile,
             mode=active_mode,
             features=decision.features,
@@ -433,10 +514,17 @@ class HybridPipeline:
             stats={
                 "lines_detected": len(line_crops),
                 "lines_accepted": sum(1 for lr in line_results if lr.tag == "ACCEPTED"),
-                "lines_low_conf": sum(1 for lr in line_results if lr.tag == "LOW_CONFIDENCE"),
-                "lines_failed": sum(1 for lr in line_results if lr.tag == "FAILED"),
+                "lines_retry": sum(1 for lr in line_results if lr.tag == "RETRY_REQUIRED"),
+                "lines_failed": sum(1 for lr in line_results if lr.tag == "FAILED_EXTRACTION"),
                 "retries": sum(1 for lr in line_results if lr.retried),
+                "fusions": sum(1 for lr in line_results if lr.fused),
+                "math_validations": sum(1 for lr in line_results if lr.math_validated),
                 "postprocessing": pp_stats
+            },
+            math_validation={
+                "document_level": doc_math_details,
+                "document_boost": round(doc_math_boost, 4),
+                "numbers_in_output": doc_math_details.get("numbers_found", [])
             }
         )
 
@@ -516,6 +604,11 @@ class HybridPipeline:
             confidence = result.get("confidence", 0.0)
             tag = self.confidence_gate.classify(confidence)
             
+            # Math-validate the arithmetic output
+            math_boost, math_details = self.math_validator.validate_arithmetic(text)
+            confidence = max(0.0, min(1.0, confidence + math_boost))
+            tag = self.confidence_gate.classify(confidence)
+            
             processing_time = time.time() - start_time
             self.logger.log_final(tag, processing_time, 1)
             
@@ -525,7 +618,8 @@ class HybridPipeline:
                     text=text,
                     confidence=confidence,
                     tag=tag,
-                    engine_used="arithmetic"
+                    engine_used="arithmetic",
+                    math_validated=math_details.get("validated", False)
                 )],
                 overall_confidence=round(confidence, 4),
                 overall_tag=tag,
@@ -535,13 +629,14 @@ class HybridPipeline:
                 features={},
                 log=self.logger.format_for_display(),
                 processing_time=round(processing_time, 3),
-                stats=result
+                stats=result,
+                math_validation=math_details
             )
         except Exception as e:
             self.logger.error(f"Arithmetic pipeline error: {e}", "OCR")
             return PipelineResult(
                 text="", lines=[], overall_confidence=0.0,
-                overall_tag="FAILED", engine_used="arithmetic",
+                overall_tag="FAILED_EXTRACTION", engine_used="arithmetic",
                 profile_used="clean", mode="arithmetic",
                 features={}, log=self.logger.format_for_display(),
                 processing_time=time.time() - start_time,
