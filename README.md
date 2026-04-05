@@ -1,37 +1,64 @@
-# Nexus OCR
+# Adaptive OCR Agent v2.1 🚀
 
-A production-grade Scientific Document Intelligence Platform that converts images or PDFs of student assignments into structured machine-readable JSON knowledge.
+A production-grade, zero-hallucination Optical Character Recognition (OCR) pipeline for extracting math, equations, and handwriting from high-variance document images.
 
-## Architecture
-- **Preprocessing**: OpenCV normalization, deskew.
-- **Layout Detection**: LayoutLMv3
-- **OCR Routing**: TrOCR (Handwriting), PaddleOCR (Printed Text), Pix2Tex/UniMERNet (Equations).
-- **Symbol Corrector**: LLM-assisted grammar correction.
-- **Semantic Reasoner**: GPT-4o structure parsing.
+Built with **Streamlit, TrOCR, Mathpix, and Semantic Math Validation**, this system evaluates confidence, validates arithmetic rules, and intelligently routes image segments to the best OCR models.
 
-## Quickstart
+## ✨ Features (v2.1)
 
-### Docker Compose
+1. **Strict Confidence Routing**: Explicit `ACCEPTED`, `RETRY_REQUIRED`, and `FAILED_EXTRACTION` labels to eliminate ambiguity.
+2. **Semantic Math Validation**: Understands math! Automatically parses parsed numbers, runs division/sum/mean consistency checks, and applies validation boosts to ensure extreme accuracy.
+3. **Smart Engine Dispatch**: 
+   - Pure handwriting? Routes to local **TrOCR**.
+   - Dense math/equations? Routes to **Mathpix** API.
+   - Mixed content? Runs both and fuses results for the best outcome.
+4. **Resilient Adaptive Preprocessing**: Per-crop **CLAHE** profiles specific to cleanly scanned or degraded/photographed images.
+5. **Interactive UI**: A rich 4-mode Streamlit app exposing visualizations of bounding boxes, confidence metrics, logs, and side-by-side mode comparisons.
+
+## 📦 Quickstart
+
+### 1. Clone the repository
 ```bash
-# Rename env file and add your LLM API Key
-cp .env.example .env
-
-# Build and start the services (API, Worker, Redis)
-docker-compose up --build
+git clone https://github.com/KarthikeyaDevatha/ocr-handwritten.git
+cd ocr-handwritten
 ```
 
-### Local Development
+### 2. Set up Python Environment
+We recommend using a virtual environment (Python 3.9+).
+```bash
+python -m venv .venv
+source .venv/bin/activate
+# For Windows: .venv\Scripts\activate
+```
+
+### 3. Install Dependencies
 ```bash
 pip install -r requirements.txt
-uvicorn backend.api.main:app --reload
+```
+*(Note: If you run into issues installing `craft-text-detector` on Windows, you may need C++ Build Tools installed).*
+
+### 4. Set Environment Variables (Optional)
+To use the highly-accurate **Mathpix** API engine, create a `.env` file in the root directory:
+```env
+MATHPIX_APP_ID=your_id_here
+MATHPIX_APP_KEY=your_key_here
+
+# To test Mathpix routing without spending API credits, enable Mock Mode:
+MATHPIX_MOCK=true
 ```
 
-## API Usage
-**POST /upload**
-Upload a document (PDF or image). Returns a `job_id`.
+### 5. Launch the Application
+```bash
+streamlit run app/app.py
+```
 
-**GET /result/{job_id}**
-Poll for the JSON result of the async job.
+## 🧠 Architecture Overview
 
-**POST /process**
-Send a Base64 encoded image for synchronous real-time processing.
+`DecisionEngine` → `LineDetector (CRAFT)` → `Preprocessing` → `Orchestrator` → `PostProcessor`
+
+- **inference/decision_engine.py**: Feature extractors (blur, math density) decide which pipeline profile handles an image via `_smart_route()`.
+- **inference/confidence_gate.py**: Calculates `alpha_ratio`, evaluates beam search token probailities, and runs rule-based semantic `MathValidator` consistency checks.
+- **inference/hybrid_pipeline.py**: Manages execution flow, retry-logic on failure, and multi-engine result fusion.
+
+---
+**Status**: Stable / v2.1
