@@ -1,5 +1,5 @@
 """
-Streamlit Demo App for Adaptive OCR Agent v2.0.
+Streamlit Demo App for Adaptive OCR Agent v2.1.
 
 Features:
 - 4-mode selector (Auto / Mathpix / TrOCR / Arithmetic)
@@ -38,7 +38,7 @@ from inference.evaluator import Evaluator, compute_cer, compute_wer
 # ============================================================================
 
 st.set_page_config(
-    page_title="Adaptive OCR Agent v2.0",
+    page_title="Adaptive OCR Agent v2.1",
     page_icon="🧠",
     layout="wide"
 )
@@ -109,7 +109,7 @@ def tag_badge(tag: str) -> str:
 # ============================================================================
 
 def main():
-    st.title("🧠 Adaptive OCR Agent v2.0")
+    st.title("🧠 Adaptive OCR Agent v2.1")
     st.caption("Decision-driven, confidence-aware handwritten OCR pipeline")
 
     # ---- SIDEBAR ----
@@ -463,7 +463,7 @@ def main():
     | **Arithmetic** | Digit extraction |
     """)
     st.sidebar.markdown("---")
-    st.sidebar.caption("Adaptive OCR Agent v2.0 • TrOCR + Mathpix + CRAFT")
+    st.sidebar.caption("Adaptive OCR Agent v2.1 • Smart Routing & Math Validation")
 
 
 if __name__ == "__main__":
