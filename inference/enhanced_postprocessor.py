@@ -230,7 +230,7 @@ class PostProcessor:
         self,
         text: str,
         is_math: bool = False,
-        clean_latex: bool = True,
+        clean_latex: bool = False,
         do_spellcheck: bool = True
     ) -> Tuple[str, dict]:
         """

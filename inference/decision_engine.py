@@ -171,11 +171,13 @@ class DecisionEngine:
         # Arithmetic: typically 1-3 lines, low density, structured
         return lines <= 5 and density < 0.15
 
-    def detect_blank(self, gray: np.ndarray) -> bool:
+    def detect_blank(self, gray: np.ndarray, binary: np.ndarray) -> bool:
         """Detect if image is effectively blank (no meaningful content)."""
         std = np.std(gray)
-        text_density = self.compute_text_density(gray)
-        return std < 10.0 or text_density < self.blank_threshold
+        # Use binary image for text computation, not grayscale!
+        text_density = self.compute_text_density(binary)
+        # Handwriting lines are very thin. Even 0.5% is enough to not be blank.
+        return std < 10.0 or text_density < 0.005
 
     # ========================================================================
     # FEATURE AGGREGATION
@@ -208,7 +210,7 @@ class DecisionEngine:
         features.text_density = self.compute_text_density(binary)
         features.line_count = self.estimate_line_count(binary)
         features.skew_angle = self.estimate_skew_angle(binary)
-        features.is_blank = self.detect_blank(gray)
+        features.is_blank = self.detect_blank(gray, binary)
         features.is_arithmetic = self.detect_arithmetic_pattern(binary)
         
         # Edge density
